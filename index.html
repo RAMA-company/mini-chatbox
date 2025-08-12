@@ -441,77 +441,6 @@
         .logout-btn:hover {
             color: var(--accent);
         }
-        
-        /* پنل اشکال‌زدایی */
-        .debug-panel {
-            background: #f8f9fa;
-            border-top: 1px solid #eee;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            max-height: 150px;
-            overflow-y: auto;
-            color: #333;
-        }
-        
-        .debug-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .debug-title {
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .debug-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        
-        .log-entry {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .log-error {
-            color: var(--error);
-        }
-        
-        .log-success {
-            color: var(--secondary);
-        }
-        
-        .log-info {
-            color: var(--primary);
-        }
-        
-        .connection-test {
-            background: #e8f0fe;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .test-btn {
-            background: var(--accent);
-            color: var(--dark);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -558,14 +487,6 @@
                         </button>
                         
                         <div class="status hidden" id="login-status"></div>
-                        
-                        <div class="connection-test">
-                            <p>تست اتصال به سرورها</p>
-                            <button class="test-btn" id="test-connection-btn">
-                                <i class="fas fa-plug"></i> تست اتصال
-                            </button>
-                            <div id="connection-status" class="status hidden"></div>
-                        </div>
                     </div>
                     
                     <!-- فرم ثبت نام -->
@@ -632,14 +553,6 @@
             </section>
         </div>
         
-        <div class="debug-panel">
-            <div class="debug-header">
-                <div class="debug-title">لاگ سیستم</div>
-                <button class="debug-btn" id="clear-logs-btn">پاک کردن لاگ‌ها</button>
-            </div>
-            <div id="log-container"></div>
-        </div>
-        
         <div class="info-section">
             <p>تمامی اطلاعات کاربران و پیام‌ها در Google Drive ذخیره می‌شوند | ساخته شده با <i class="fas fa-heart" style="color: var(--error);"></i></p>
         </div>
@@ -670,31 +583,14 @@
         const charCount = document.getElementById('char-count');
         const onlineCount = document.getElementById('online-count');
         const logoutBtn = document.getElementById('logout-btn');
-        const logContainer = document.getElementById('log-container');
-        const clearLogsBtn = document.getElementById('clear-logs-btn');
-        const testConnectionBtn = document.getElementById('test-connection-btn');
-        const connectionStatus = document.getElementById('connection-status');
         
         // URL اسکریپت‌های شما
-        const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycvszZNtoxcsVKRdnaZI2KLJ903R_2W4Y8RiKsqJYnePXodm9-kVBFZU1kB3oTpKJLqQ/exec";
-        const MESSAGES_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt14rn_STl-XFaSJSmCCENayGgOa4YpPljnWOTxR0q4YkLKefgZ5pt4tElXUBNX1CkUA/exec";
+        const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgN8atCh4a_-7wPlvqEpaY6A1nt_c2IFvPF4FRMgz279yOQW11m5e2hselkLIrM0Cgwg/exec";
+        const MESSAGES_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMbEk71yIjSnIHT8_dLRol4gNOEu_EPrULhJcZvpN8tv_OMEa4sKXUhO1NhpccXIna1g/exec";
         
         // متغیرهای وضعیت
         let currentUser = null;
         let messageInterval;
-        
-        // تابع افزودن لاگ
-        function addLog(message, type = 'info') {
-            const logEntry = document.createElement('div');
-            logEntry.classList.add('log-entry', `log-${type}`);
-            
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            logEntry.innerHTML = `<strong>[${timeString}]</strong> ${message}`;
-            logContainer.appendChild(logEntry);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
         
         // مدیریت تب‌های فرم
         loginTab.addEventListener('click', () => {
@@ -711,17 +607,6 @@
             registerForm.classList.remove('hidden');
             loginForm.classList.add('hidden');
             clearStatus();
-        });
-        
-        // تست اتصال به سرورها
-        testConnectionBtn.addEventListener('click', () => {
-            testConnection();
-        });
-        
-        // پاک کردن لاگ‌ها
-        clearLogsBtn.addEventListener('click', () => {
-            logContainer.innerHTML = '';
-            addLog('لاگ‌ها پاک شدند', 'info');
         });
         
         // مدیریت ورود کاربر
@@ -810,58 +695,6 @@
             }, 3000);
         });
         
-        // تابع تست اتصال
-        function testConnection() {
-            showStatus(connectionStatus, "در حال تست اتصال به سرورها...", "success");
-            connectionStatus.classList.remove('hidden');
-            
-            // تست اتصال به اسکریپت کاربران
-            fetch(USERS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({action: 'ping'}),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`خطای HTTP: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(data => {
-                addLog(`اتصال به اسکریپت کاربران موفق: ${data}`, 'success');
-                showStatus(connectionStatus, "اتصال به اسکریپت کاربران موفقیت‌آمیز بود", "success");
-                
-                // تست اتصال به اسکریپت پیام‌ها
-                fetch(MESSAGES_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({action: 'ping'}),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`خطای HTTP: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    addLog(`اتصال به اسکریپت پیام‌ها موفق: ${data}`, 'success');
-                    showStatus(connectionStatus, "اتصال به هر دو اسکریپت موفقیت‌آمیز بود", "success");
-                })
-                .catch(error => {
-                    addLog(`خطا در اتصال به اسکریپت پیام‌ها: ${error.message}`, 'error');
-                    showStatus(connectionStatus, `خطا در اتصال به اسکریپت پیام‌ها: ${error.message}`, "error");
-                });
-            })
-            .catch(error => {
-                addLog(`خطا در اتصال به اسکریپت کاربران: ${error.message}`, 'error');
-                showStatus(connectionStatus, `خطا در اتصال به اسکریپت کاربران: ${error.message}`, "error");
-            });
-        }
-        
         // تابع ارسال پیام
         function sendMessage() {
             const text = messageInput.value.trim();
@@ -892,7 +725,6 @@
         // تابع ورود کاربر
         function loginUser(username, password) {
             showStatus(loginStatus, "در حال بررسی اطلاعات...", "success");
-            addLog(`درخواست ورود برای کاربر: ${username}`, 'info');
             
             // ساخت درخواست به Google Apps Script
             const payload = {
@@ -908,35 +740,27 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`خطای HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     currentUser = { username: username };
-                    addLog(`ورود موفقیت‌آمیز برای کاربر: ${username}`, 'success');
                     showStatus(loginStatus, "ورود با موفقیت انجام شد!", "success");
                     
                     setTimeout(() => {
                         loginSuccess();
                     }, 1000);
                 } else {
-                    throw new Error(data.message || "خطا در ورود");
+                    showStatus(loginStatus, data.message || "خطا در ورود", "error");
                 }
             })
             .catch(error => {
-                addLog(`خطا در ورود: ${error.message}`, 'error');
-                showStatus(loginStatus, `خطا: ${error.message}`, "error");
+                showStatus(loginStatus, "خطای شبکه: " + error.message, "error");
             });
         }
         
         // تابع ثبت نام کاربر
         function registerUser(username, password) {
             showStatus(registerStatus, "در حال ثبت نام کاربر جدید...", "success");
-            addLog(`درخواست ثبت نام برای کاربر جدید: ${username}`, 'info');
             
             // ساخت درخواست به Google Apps Script
             const payload = {
@@ -952,28 +776,21 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`خطای HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     currentUser = { username: username };
-                    addLog(`ثبت نام موفقیت‌آمیز برای کاربر: ${username}`, 'success');
                     showStatus(registerStatus, "ثبت نام با موفقیت انجام شد!", "success");
                     
                     setTimeout(() => {
                         loginSuccess();
                     }, 1000);
                 } else {
-                    throw new Error(data.message || "خطا در ثبت نام");
+                    showStatus(registerStatus, data.message || "خطا در ثبت نام", "error");
                 }
             })
             .catch(error => {
-                addLog(`خطا در ثبت نام: ${error.message}`, 'error');
-                showStatus(registerStatus, `خطا: ${error.message}`, "error");
+                showStatus(registerStatus, "خطای شبکه: " + error.message, "error");
             });
         }
         
@@ -987,7 +804,6 @@
             
             // نمایش پیام در رابط کاربری
             showMessage(currentUser.username, text, 'sent');
-            addLog(`ارسال پیام توسط ${currentUser.username}: ${text}`, 'info');
             
             // ذخیره پیام در Google Drive
             fetch(MESSAGES_SCRIPT_URL, {
@@ -997,33 +813,21 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`خطای HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status !== 'success') {
-                    throw new Error(data.message || "خطا در ذخیره پیام");
+                    console.error("خطا در ذخیره پیام:", data.message);
                 }
-                addLog(`پیام با موفقیت ذخیره شد`, 'success');
             })
             .catch(error => {
-                addLog(`خطا در ذخیره پیام: ${error.message}`, 'error');
-                showMessage('سیستم', 'خطا در ذخیره پیام. لطفاً دوباره تلاش کنید.', 'received');
+                console.error("خطای شبکه در ذخیره پیام:", error);
             });
         }
         
         // تابع بارگذاری پیام‌ها
         function loadMessages() {
             fetch(MESSAGES_SCRIPT_URL)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`خطای HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success' && data.messages) {
                     // حذف پیام‌های قدیمی
@@ -1036,11 +840,10 @@
                         const type = msg.sender === currentUser.username ? 'sent' : 'received';
                         showMessage(msg.sender, msg.text, type);
                     });
-                    addLog(`بارگذاری ${data.messages.length} پیام جدید`, 'success');
                 }
             })
             .catch(error => {
-                addLog(`خطا در بارگذاری پیام‌ها: ${error.message}`, 'error');
+                console.error("خطا در بارگذاری پیام‌ها:", error);
             });
         }
         
@@ -1108,9 +911,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             // بارگذاری اولیه پیام خوش‌آمدگویی
             showMessage('سیستم', 'به پیام‌رسان مبتنی بر Google Drive خوش آمدید! لطفاً با رعایت ادب گفتگو کنید.', 'received');
-            addLog('سیستم آماده به کار است', 'info');
-            addLog(`اسکریپت کاربران: ${USERS_SCRIPT_URL}`, 'info');
-            addLog(`اسکریپت پیام‌ها: ${MESSAGES_SCRIPT_URL}`, 'info');
         });
     </script>
 </body>
