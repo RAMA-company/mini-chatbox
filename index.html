@@ -441,6 +441,174 @@
         .logout-btn:hover {
             color: var(--accent);
         }
+        
+        /* پنل اشکال‌زدایی */
+        .debug-panel {
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 150px;
+            overflow-y: auto;
+            color: #333;
+        }
+        
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .debug-title {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .debug-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-error {
+            color: var(--error);
+        }
+        
+        .log-success {
+            color: var(--secondary);
+        }
+        
+        .log-info {
+            color: var(--primary);
+        }
+        
+        .connection-test {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .test-btn {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .solution-card {
+            background: #e8f5e9;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .solution-card h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .solution-card ul {
+            padding-right: 20px;
+        }
+        
+        .solution-card li {
+            margin-bottom: 8px;
+        }
+        
+        .success-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+            animation: fadeInOut 3s forwards;
+            display: none;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -60%); }
+            20% { opacity: 1; transform: translate(-50%, -50%); }
+            80% { opacity: 1; transform: translate(-50%, -50%); }
+            100% { opacity: 0; transform: translate(-50%, -40%); }
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: var(--secondary);
+            stroke-miterlimit: 10;
+            margin: 20px auto;
+            box-shadow: inset 0px 0px 0px var(--secondary);
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: var(--secondary);
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 40px var(--secondary);
+            }
+        }
     </style>
 </head>
 <body>
@@ -487,6 +655,14 @@
                         </button>
                         
                         <div class="status hidden" id="login-status"></div>
+                        
+                        <div class="connection-test">
+                            <p>تست اتصال به سرورها</p>
+                            <button class="test-btn" id="test-connection-btn">
+                                <i class="fas fa-plug"></i> تست اتصال
+                            </button>
+                            <div id="connection-status" class="status hidden"></div>
+                        </div>
                     </div>
                     
                     <!-- فرم ثبت نام -->
@@ -511,6 +687,16 @@
                         </button>
                         
                         <div class="status hidden" id="register-status"></div>
+                    </div>
+                    
+                    <!-- راهکارهای رفع خطا -->
+                    <div class="solution-card">
+                        <h3><i class="fas fa-lightbulb"></i> راهکارهای رفع خطا</h3>
+                        <ul>
+                            <li>از دکمه "تست اتصال" برای بررسی سرورها استفاده کنید</li>
+                            <li>مطمئن شوید به اینترنت متصل هستید</li>
+                            <li>اسکریپت‌ها را در مرورگر باز کنید و مجوزها را تأیید کنید</li>
+                        </ul>
                     </div>
                 </div>
             </section>
@@ -553,9 +739,26 @@
             </section>
         </div>
         
+        <div class="debug-panel">
+            <div class="debug-header">
+                <div class="debug-title">لاگ سیستم</div>
+                <button class="debug-btn" id="clear-logs-btn">پاک کردن لاگ‌ها</button>
+            </div>
+            <div id="log-container"></div>
+        </div>
+        
         <div class="info-section">
             <p>تمامی اطلاعات کاربران و پیام‌ها در Google Drive ذخیره می‌شوند | ساخته شده با <i class="fas fa-heart" style="color: var(--error);"></i></p>
         </div>
+    </div>
+    
+    <!-- انیمیشن موفقیت -->
+    <div class="success-animation" id="success-animation">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        <h2 id="success-message">عملیات با موفقیت انجام شد!</h2>
     </div>
     
     <script>
@@ -583,14 +786,43 @@
         const charCount = document.getElementById('char-count');
         const onlineCount = document.getElementById('online-count');
         const logoutBtn = document.getElementById('logout-btn');
+        const logContainer = document.getElementById('log-container');
+        const clearLogsBtn = document.getElementById('clear-logs-btn');
+        const testConnectionBtn = document.getElementById('test-connection-btn');
+        const connectionStatus = document.getElementById('connection-status');
+        const successAnimation = document.getElementById('success-animation');
+        const successMessage = document.getElementById('success-message');
         
-        // URL اسکریپت‌های شما
+        // URL اسکریپت‌های جدید شما
         const USERS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgN8atCh4a_-7wPlvqEpaY6A1nt_c2IFvPF4FRMgz279yOQW11m5e2hselkLIrM0Cgwg/exec";
         const MESSAGES_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMbEk71yIjSnIHT8_dLRol4gNOEu_EPrULhJcZvpN8tv_OMEa4sKXUhO1NhpccXIna1g/exec";
         
         // متغیرهای وضعیت
         let currentUser = null;
         let messageInterval;
+        
+        // تابع افزودن لاگ
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.classList.add('log-entry', `log-${type}`);
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            logEntry.innerHTML = `<strong>[${timeString}]</strong> ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        // تابع نمایش موفقیت
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successAnimation.style.display = 'block';
+            
+            setTimeout(() => {
+                successAnimation.style.display = 'none';
+            }, 3000);
+        }
         
         // مدیریت تب‌های فرم
         loginTab.addEventListener('click', () => {
@@ -607,6 +839,17 @@
             registerForm.classList.remove('hidden');
             loginForm.classList.add('hidden');
             clearStatus();
+        });
+        
+        // تست اتصال به سرورها
+        testConnectionBtn.addEventListener('click', () => {
+            testConnection();
+        });
+        
+        // پاک کردن لاگ‌ها
+        clearLogsBtn.addEventListener('click', () => {
+            logContainer.innerHTML = '';
+            addLog('لاگ‌ها پاک شدند', 'info');
         });
         
         // مدیریت ورود کاربر
@@ -689,11 +932,75 @@
             confirmPassword.value = '';
             
             // نمایش پیام خروج
+            showSuccess("شما با موفقیت خارج شدید");
             showStatus(loginStatus, "شما با موفقیت خارج شدید", "success");
             setTimeout(() => {
                 clearStatus();
             }, 3000);
         });
+        
+        // تابع تست اتصال بهبودیافته
+        function testConnection() {
+            showStatus(connectionStatus, "در حال تست اتصال به سرورها...", "success");
+            connectionStatus.classList.remove('hidden');
+            
+            // تست اتصال به اسکریپت کاربران
+            fetchWithTimeout(USERS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({action: 'ping'}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }, 10000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                addLog(`اتصال به اسکریپت کاربران موفق: ${data}`, 'success');
+                showStatus(connectionStatus, "اتصال به اسکریپت کاربران موفقیت‌آمیز بود", "success");
+                
+                // تست اتصال به اسکریپت پیام‌ها
+                fetchWithTimeout(MESSAGES_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({action: 'ping'}),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }, 10000)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`خطای HTTP: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    addLog(`اتصال به اسکریپت پیام‌ها موفق: ${data}`, 'success');
+                    showStatus(connectionStatus, "اتصال به هر دو اسکریپت موفقیت‌آمیز بود", "success");
+                    showSuccess("اتصال به سرورها با موفقیت برقرار شد!");
+                })
+                .catch(error => {
+                    addLog(`خطا در اتصال به اسکریپت پیام‌ها: ${error.message}`, 'error');
+                    showStatus(connectionStatus, `خطا در اتصال به اسکریپت پیام‌ها: ${error.message}`, "error");
+                });
+            })
+            .catch(error => {
+                addLog(`خطا در اتصال به اسکریپت کاربران: ${error.message}`, 'error');
+                showStatus(connectionStatus, `خطا در اتصال به اسکریپت کاربران: ${error.message}`, "error");
+            });
+        }
+        
+        // تابع fetch با تایم‌اوت
+        function fetchWithTimeout(url, options, timeout = 10000) {
+            return Promise.race([
+                fetch(url, options),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('درخواست به دلیل تاخیر پاسخ لغو شد')), timeout)
+                )
+            ]);
+        }
         
         // تابع ارسال پیام
         function sendMessage() {
@@ -725,6 +1032,7 @@
         // تابع ورود کاربر
         function loginUser(username, password) {
             showStatus(loginStatus, "در حال بررسی اطلاعات...", "success");
+            addLog(`درخواست ورود برای کاربر: ${username}`, 'info');
             
             // ساخت درخواست به Google Apps Script
             const payload = {
@@ -733,34 +1041,42 @@
                 password: password
             };
             
-            fetch(USERS_SCRIPT_URL, {
+            fetchWithTimeout(USERS_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload),
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }, 15000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status}`);
+                }
+                return response.json();
             })
-            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     currentUser = { username: username };
-                    showStatus(loginStatus, "ورود با موفقیت انجام شد!", "success");
+                    addLog(`ورود موفقیت‌آمیز برای کاربر: ${username}`, 'success');
+                    showSuccess("ورود با موفقیت انجام شد!");
                     
                     setTimeout(() => {
                         loginSuccess();
                     }, 1000);
                 } else {
-                    showStatus(loginStatus, data.message || "خطا در ورود", "error");
+                    throw new Error(data.message || "خطا در ورود");
                 }
             })
             .catch(error => {
-                showStatus(loginStatus, "خطای شبکه: " + error.message, "error");
+                addLog(`خطا در ورود: ${error.message}`, 'error');
+                showStatus(loginStatus, `خطا: ${error.message}`, "error");
             });
         }
         
         // تابع ثبت نام کاربر
         function registerUser(username, password) {
             showStatus(registerStatus, "در حال ثبت نام کاربر جدید...", "success");
+            addLog(`درخواست ثبت نام برای کاربر جدید: ${username}`, 'info');
             
             // ساخت درخواست به Google Apps Script
             const payload = {
@@ -769,28 +1085,35 @@
                 password: password
             };
             
-            fetch(USERS_SCRIPT_URL, {
+            fetchWithTimeout(USERS_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload),
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }, 15000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status}`);
+                }
+                return response.json();
             })
-            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     currentUser = { username: username };
-                    showStatus(registerStatus, "ثبت نام با موفقیت انجام شد!", "success");
+                    addLog(`ثبت نام موفقیت‌آمیز برای کاربر: ${username}`, 'success');
+                    showSuccess("ثبت نام با موفقیت انجام شد!");
                     
                     setTimeout(() => {
                         loginSuccess();
                     }, 1000);
                 } else {
-                    showStatus(registerStatus, data.message || "خطا در ثبت نام", "error");
+                    throw new Error(data.message || "خطا در ثبت نام");
                 }
             })
             .catch(error => {
-                showStatus(registerStatus, "خطای شبکه: " + error.message, "error");
+                addLog(`خطا در ثبت نام: ${error.message}`, 'error');
+                showStatus(registerStatus, `خطا: ${error.message}`, "error");
             });
         }
         
@@ -804,30 +1127,44 @@
             
             // نمایش پیام در رابط کاربری
             showMessage(currentUser.username, text, 'sent');
+            addLog(`ارسال پیام توسط ${currentUser.username}: ${text}`, 'info');
             
             // ذخیره پیام در Google Drive
-            fetch(MESSAGES_SCRIPT_URL, {
+            fetchWithTimeout(MESSAGES_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(newMessage),
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }, 10000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status}`);
+                }
+                return response.json();
             })
-            .then(response => response.json())
             .then(data => {
                 if (data.status !== 'success') {
-                    console.error("خطا در ذخیره پیام:", data.message);
+                    throw new Error(data.message || "خطا در ذخیره پیام");
                 }
+                addLog(`پیام با موفقیت ذخیره شد`, 'success');
+                showSuccess("پیام با موفقیت ارسال شد!");
             })
             .catch(error => {
-                console.error("خطای شبکه در ذخیره پیام:", error);
+                addLog(`خطا در ذخیره پیام: ${error.message}`, 'error');
+                showMessage('سیستم', 'خطا در ذخیره پیام. لطفاً دوباره تلاش کنید.', 'received');
             });
         }
         
         // تابع بارگذاری پیام‌ها
         function loadMessages() {
-            fetch(MESSAGES_SCRIPT_URL)
-            .then(response => response.json())
+            fetchWithTimeout(MESSAGES_SCRIPT_URL, {}, 10000)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'success' && data.messages) {
                     // حذف پیام‌های قدیمی
@@ -840,10 +1177,11 @@
                         const type = msg.sender === currentUser.username ? 'sent' : 'received';
                         showMessage(msg.sender, msg.text, type);
                     });
+                    addLog(`بارگذاری ${data.messages.length} پیام جدید`, 'success');
                 }
             })
             .catch(error => {
-                console.error("خطا در بارگذاری پیام‌ها:", error);
+                addLog(`خطا در بارگذاری پیام‌ها: ${error.message}`, 'error');
             });
         }
         
@@ -911,6 +1249,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             // بارگذاری اولیه پیام خوش‌آمدگویی
             showMessage('سیستم', 'به پیام‌رسان مبتنی بر Google Drive خوش آمدید! لطفاً با رعایت ادب گفتگو کنید.', 'received');
+            addLog('سیستم آماده به کار است', 'info');
+            addLog(`اسکریپت کاربران: ${USERS_SCRIPT_URL}`, 'info');
+            addLog(`اسکریپت پیام‌ها: ${MESSAGES_SCRIPT_URL}`, 'info');
+            addLog('برای تست اتصال به سرورها از دکمه "تست اتصال" استفاده کنید', 'info');
         });
     </script>
 </body>
